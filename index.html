@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bot_Ni_BAZENGA Subscriber Goal</title>
+<style>
+:root{--red:#ff3038;--white:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
+body{font-family:Impact,"Arial Narrow",Arial,sans-serif}
+.stage{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:8px}
+.goal{position:relative;width:100%;height:100%;min-width:280px;min-height:130px;padding:13px 20px 10px;color:var(--white);background:rgba(0,0,0,.90);border:1px solid rgba(255,48,56,.36);border-radius:10px;box-shadow:0 0 8px rgba(255,25,35,.13),inset 0 0 12px rgba(255,25,35,.025);display:flex;flex-direction:column;justify-content:center}
+.goal:before{content:"";position:absolute;top:-1px;left:0;right:0;height:2px;background:var(--red);border-radius:10px 10px 0 0;box-shadow:0 0 7px rgba(255,48,56,.8)}
+.goal:after{content:"";position:absolute;left:6%;right:6%;bottom:-2px;height:2px;background:var(--red);border-radius:50%;opacity:.55;box-shadow:0 0 5px 1px rgba(255,48,56,.4);animation:bottomGlow 3.2s ease-in-out infinite;pointer-events:none}
+@keyframes bottomGlow{0%,100%{opacity:.35;box-shadow:0 0 4px 1px rgba(255,48,56,.25)}50%{opacity:.9;box-shadow:0 0 10px 2px rgba(255,48,56,.65)}}
+.top{position:absolute;top:12px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:"Arial Narrow",Arial,sans-serif;font-size:clamp(8px,1.05vw,11px);font-weight:800;letter-spacing:.22em}
+.label{display:flex;align-items:center;gap:7px}.dot{width:4px;height:4px;flex:none;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red)}
+.target{color:var(--red);font-size:clamp(8px,1vw,10px)}
+.count{font-family:Impact,"Arial Narrow",Arial,sans-serif;font-size:clamp(34px,5vw,54px);line-height:1;font-weight:900;letter-spacing:-.01em;text-align:center;white-space:nowrap;color:#fff;text-shadow:0 0 7px rgba(255,48,56,.34);margin:11px 0 8px}
+.track{width:100%;height:7px;flex:none;border-radius:99px;overflow:hidden;background:#240d10}
+.fill{height:100%;width:50.1%;border-radius:99px;background:linear-gradient(90deg,#ff343b,#ff4148);box-shadow:0 0 5px rgba(255,48,56,.55);position:relative;transition:width .5s ease}
+.fill:after{content:"";position:absolute;right:0;top:0;bottom:0;width:2px;background:#fff;box-shadow:0 0 4px #fff}
+.bottom{text-align:center;color:var(--red);font-family:"Arial Narrow",Arial,sans-serif;font-size:clamp(7px,.8vw,9px);letter-spacing:.24em;font-weight:800;margin-top:6px}
+.status{display:none;text-align:center;color:#aaa;font:9px Arial,sans-serif;margin-top:3px}
+@media(max-height:160px){.goal{padding-top:9px;padding-bottom:6px}.top{top:8px}.count{font-size:clamp(31px,5vw,50px);margin:8px 0 6px}.track{height:6px}.bottom{margin-top:4px}}
+@media(prefers-reduced-motion:reduce){.goal:after{animation:none}}
+</style>
+</head>
+<body>
+<div class="stage"><section class="goal" aria-label="Subscriber goal">
+<div class="top"><div class="label"><span class="dot"></span><span>SUB GOAL</span></div><div class="target" id="target-label">1000</div></div>
+<div class="count"><span id="current">501</span> / <span id="goal-number">1000</span></div>
+<div class="track"><div class="fill" id="fill"></div></div><div class="bottom" id="percent">50.1% COMPLETE</div><div class="status" id="status"></div>
+</section></div>
+<script>
+const GOAL=1000;
+function render(n){
+ const count=Math.max(0,Number(n)||0),pct=Math.min(100,count/GOAL*100);
+ document.getElementById("current").textContent=Math.floor(count).toLocaleString("en-US");
+ document.getElementById("goal-number").textContent=GOAL.toLocaleString("en-US");
+ document.getElementById("target-label").textContent=GOAL.toLocaleString("en-US");
+ document.getElementById("fill").style.width=pct+"%";
+ document.getElementById("percent").textContent=(Math.round(pct*10)/10).toFixed(1)+"% COMPLETE";
+}
+async function update(){
+ const status=document.getElementById("status");
+ try{
+  const r=await fetch("/.netlify/functions/subscribers",{cache:"no-store"});
+  const d=await r.json();
+  if(!r.ok||typeof d.subscriberCount!=="number")throw new Error(d.error||"Unable to fetch count");
+  render(d.subscriberCount);
+  status.style.display="block";
+  status.textContent=d.rounded?"LIVE · YouTube public count (rounded)":"LIVE · YouTube";
+ }catch(e){
+  status.style.display="block";
+  status.textContent="Subscriber count unavailable · check API setup";
+ }
+}
+render(501); update(); setInterval(update,120000);
+</script>
+</body></html>
