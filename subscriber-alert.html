@@ -8,36 +8,29 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent!important}
 body{font-family:'Press Start 2P',monospace;color:#fff}
-#blur{position:absolute;top:0;left:0;width:100%;height:27%;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.12);opacity:0;transition:opacity .25s}
-#alert{position:absolute;top:5%;left:50%;transform:translate(-50%,-20px) scale(.96);width:min(94%,1050px);padding:22px 24px 18px;background:rgba(3,7,30,.94);border:4px solid #25baff;box-shadow:0 0 0 4px #10103a,0 0 24px #008cff;border-radius:4px;text-align:center;opacity:0;transition:opacity .25s,transform .25s}
+#blur{position:absolute;inset:0 0 auto;height:30%;opacity:0;transition:opacity .25s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.12);pointer-events:none}
+#alert{position:absolute;top:5%;left:50%;transform:translate(-50%,-20px) scale(.96);width:min(96%,1100px);padding:18px 22px;background:rgba(3,7,30,.96);border:4px solid #25baff;box-shadow:0 0 0 3px #10103a,0 0 24px #008cff;border-radius:4px;text-align:center;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
 #alert.show{opacity:1;transform:translate(-50%,0) scale(1)}
 .kicker{color:#fff;font-size:clamp(10px,1.4vw,17px);text-shadow:3px 3px #000;line-height:1.8}
-#name{margin:18px 0 12px;color:#ffe600;font-size:clamp(20px,4vw,44px);line-height:1.5;overflow-wrap:anywhere;text-shadow:3px 3px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,0 0 12px #ffb700}
+#name{margin:14px auto 10px;padding:8px 10px;max-width:100%;color:#ffe600;font-size:clamp(18px,3.6vw,42px);line-height:1.5;overflow-wrap:anywhere;word-break:break-word;text-shadow:3px 3px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,0 0 12px #ffb700}
 #welcome{color:#fff;font-size:clamp(9px,1.2vw,14px);line-height:1.8;text-shadow:3px 3px #000}
-.arcade{height:72px;position:relative;margin:18px 0 5px;overflow:hidden;background:rgba(0,0,0,.28);border-top:2px dashed #4b8dff;border-bottom:2px dashed #4b8dff}
-.pac{position:absolute;top:14px;left:-70px;font-size:42px;animation:chomp 4s linear infinite}
-@keyframes chomp{0%{left:-70px}100%{left:110%}}
-.ghost{position:absolute;top:24px;font-size:30px;animation:floaty 3s ease-in-out infinite alternate}
-.g1{left:24%;animation-delay:-.5s}.g2{left:53%;animation-delay:-1.4s}.g3{left:76%;animation-delay:-.9s}
-@keyframes floaty{from{transform:translateY(3px)}to{transform:translateY(-7px)}}
+.arcade{height:100px;position:relative;margin:12px 0 0;overflow:hidden;background:rgba(0,0,0,.25);border-top:2px dashed #4b8dff;border-bottom:2px dashed #4b8dff}
+#characters{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
 #test{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 14px;border:2px solid #fff;background:#10103a;color:#fff;font:12px Arial,sans-serif;cursor:pointer}
 #hint{position:absolute;bottom:4px;left:0;width:100%;text-align:center;color:#fff;font:11px Arial,sans-serif;text-shadow:1px 1px #000}
-@media(prefers-reduced-motion:reduce){.pac,.ghost{animation:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div id="blur"></div>
-<section id="alert">
+<section id="alert" aria-live="polite">
   <div class="kicker">★ NEW SUBSCRIBER ★</div>
   <div id="name">NEW PLAYER</div>
   <div id="welcome">WELCOME TO THE FAMILY!</div>
   <div class="arcade">
-    <span class="pac">ᗧ</span>
-    <span class="ghost g1">👻</span>
-    <span class="ghost g2">👻</span>
-    <span class="ghost g3">👻</span>
+    <img id="characters" src="./Pacman_Ghosts_Transparent_Download.gif" alt="Animated Pac-Man and ghosts">
   </div>
 </section>
 <button id="test" onclick="playTest()">▶ TEST ALERT</button>
@@ -48,15 +41,25 @@ const alertBox=document.getElementById('alert');
 const blurBox=document.getElementById('blur');
 const audio=document.getElementById('sound');
 let hideTimer;
-async function playTest(){
+
+async function showAlert(subscriberName='NEW PLAYER'){
   clearTimeout(hideTimer);
-  document.getElementById('name').textContent='NEW PLAYER';
+  const safeName=String(subscriberName).slice(0,80);
+  document.getElementById('name').textContent=safeName;
   blurBox.style.opacity='1';
   alertBox.classList.add('show');
   audio.currentTime=0;
-  try{await audio.play()}catch(e){document.getElementById('hint').textContent='Browser blocked audio. Click TEST ALERT again.'}
-  hideTimer=setTimeout(()=>{alertBox.classList.remove('show');blurBox.style.opacity='0'},6000);
+  try { await audio.play(); }
+  catch(e) {
+    document.getElementById('hint').textContent='Click TEST ALERT to allow browser audio playback';
+  }
+  hideTimer=setTimeout(()=>{
+    alertBox.classList.remove('show');
+    blurBox.style.opacity='0';
+  },6000);
 }
+function playTest(){ showAlert('NEW PLAYER'); }
+window.showSubscriberAlert=showAlert;
 </script>
 </body>
 </html>
