@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bot_Ni_BAZENGA Pac-Man Subscriber Alert</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent}
+body{font-family:'Press Start 2P',monospace;color:#fff}
+#blur{position:absolute;top:0;left:0;width:100%;height:27%;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:rgba(0,0,0,.12);opacity:0;transition:opacity .25s}
+#alert{position:absolute;top:5%;left:50%;transform:translate(-50%,-20px) scale(.96);width:min(94%,1050px);padding:22px 24px 18px;background:rgba(3,7,30,.94);border:4px solid #25baff;box-shadow:0 0 0 4px #10103a,0 0 24px #008cff;border-radius:4px;text-align:center;opacity:0;transition:opacity .25s,transform .25s}
+#alert.show{opacity:1;transform:translate(-50%,0) scale(1)}
+.kicker{color:#fff;font-size:clamp(10px,1.4vw,17px);text-shadow:3px 3px #000;line-height:1.8}
+#name{margin:18px 0 12px;color:#ffe600;font-size:clamp(20px,4vw,44px);line-height:1.5;overflow-wrap:anywhere;text-shadow:3px 3px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,0 0 12px #ffb700}
+#welcome{color:#fff;font-size:clamp(9px,1.2vw,14px);line-height:1.8;text-shadow:3px 3px #000}
+.arcade{height:72px;position:relative;margin:18px 0 5px;overflow:hidden;background:rgba(0,0,0,.28);border-top:2px dashed #4b8dff;border-bottom:2px dashed #4b8dff}
+.pac{position:absolute;top:14px;left:-70px;font-size:42px;animation:chomp 4s linear infinite}
+@keyframes chomp{0%{left:-70px}100%{left:110%}}
+.ghost{position:absolute;top:24px;font-size:30px;animation:floaty 3s ease-in-out infinite alternate}
+.g1{left:24%;animation-delay:-.5s}.g2{left:53%;animation-delay:-1.4s}.g3{left:76%;animation-delay:-.9s}
+@keyframes floaty{from{transform:translateY(3px)}to{transform:translateY(-7px)}}
+#test{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);padding:10px 14px;border:2px solid #fff;background:#10103a;color:#fff;font:12px Arial,sans-serif;cursor:pointer}
+#hint{position:absolute;bottom:4px;left:0;width:100%;text-align:center;color:#fff;font:11px Arial,sans-serif;text-shadow:1px 1px #000}
+@media(prefers-reduced-motion:reduce){.pac,.ghost{animation:none}}
+</style>
+</head>
+<body>
+<div id="blur"></div>
+<section id="alert">
+  <div class="kicker">★ NEW SUBSCRIBER ★</div>
+  <div id="name">NEW PLAYER</div>
+  <div id="welcome">WELCOME TO THE FAMILY!</div>
+  <div class="arcade">
+    <span class="pac">ᗧ</span>
+    <span class="ghost g1">👻</span>
+    <span class="ghost g2">👻</span>
+    <span class="ghost g3">👻</span>
+  </div>
+</section>
+<button id="test" onclick="playTest()">▶ TEST ALERT</button>
+<div id="hint">PREVIEW MODE • Click TEST ALERT to preview sound and animation</div>
+<audio id="sound" preload="auto" src="./Bot_Ni_BAZENGA_Pacman_Alert_Audio.mp3"></audio>
+<script>
+const alertBox=document.getElementById('alert');
+const blurBox=document.getElementById('blur');
+const audio=document.getElementById('sound');
+let hideTimer;
+async function playTest(){
+  clearTimeout(hideTimer);
+  document.getElementById('name').textContent='NEW PLAYER';
+  blurBox.style.opacity='1';
+  alertBox.classList.add('show');
+  audio.currentTime=0;
+  try{await audio.play()}catch(e){document.getElementById('hint').textContent='Browser blocked audio. Click TEST ALERT again.'}
+  hideTimer=setTimeout(()=>{alertBox.classList.remove('show');blurBox.style.opacity='0'},6000);
+}
+</script>
+</body>
+</html>
